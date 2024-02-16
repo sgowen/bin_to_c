@@ -23,11 +23,11 @@ int iSize, iData;
 unsigned char *p;
 char szLeaf[256];
 
-   if (argc != 2)
+   if (argc != 3)
       {
       printf("bin_to_c Copyright (c) 2013 BitBank Software, Inc.\n"); 
-      printf("Usage: bin_to_c <filename>\n");
-      printf("output is written to stdout\n"); 
+      printf("Usage: bin_to_c <filename> <array_name>\n");
+      printf("output is written to stdout\n");
       return 0; // no filename passed
       }
    ihandle = fopen(argv[1],"rb"); // open input file
@@ -41,10 +41,10 @@ char szLeaf[256];
    iSize = (int)ftell(ihandle);
    fseek(ihandle, 0, SEEK_SET);
    p = (unsigned char *)malloc(0x10000); // allocate 64k to play with
-   GetLeafName(argv[1], szLeaf);
+   GetLeafName(argv[2], szLeaf);
    printf("//\n// %s\n//\n", szLeaf); // comment header with filename
    FixName(szLeaf); // remove unusable characters
-   printf("const uint8_t %s[] PROGMEM = {", szLeaf); // start of data array
+   printf("const uint8_t %s[] = {", szLeaf); // start of data array
    while (iSize)
    {
       iData = fread(p, 1, 0x10000, ihandle); // try to read 64k
@@ -128,26 +128,26 @@ int i, iLen;
 // Trim off the leaf name from a fully
 // formed file pathname
 //
-void GetLeafName(char *fname, char *leaf)
+void GetLeafName(char *array_name, char *leaf)
 {
 int i, iLen;
    
-   iLen = strlen(fname);
-   for (i=iLen-1; i>=0; i--)
-      {
-      if (fname[i] == '\\' || fname[i] == '/') // Windows or Linux
-         break;
-      }
-   strcpy(leaf, &fname[i+1]);
+   iLen = strlen(array_name);
+//   for (i=iLen-1; i>=0; i--)
+//      {
+//      if (fname[i] == '\\' || fname[i] == '/') // Windows or Linux
+//         break;
+//      }
+   strcpy(leaf, &array_name[0]);
    // remove the filename extension
-   iLen = strlen(leaf); 
-   for (i=iLen-1; i>=0; i--)
-   {
-      if (leaf[i] == '.')
-      {
-         leaf[i] = 0;
-         break;
-      }
-   }
+//   iLen = strlen(leaf); 
+//   for (i=iLen-1; i>=0; i--)
+//   {
+//      if (leaf[i] == '.')
+//      {
+//         leaf[i] = 0;
+//         break;
+//      }
+//   }
 } /* GetLeafName() */
 
